@@ -19,13 +19,18 @@ class Controller:
             result.append({
                 "_id": str(p["_id"]),
                 "product_name": p["product_name"],
-                "createdAt": p["createdAt"]
+                "createdAt": p["createdAt"],
+                "lowest_price": p["lowest_price"],
+                "lowest_price_link": p["lowest_price_link"]
             })
-        
         return result
     
     def insert_new_product(self, new_product: str):
-        self.products_collections.insert_one({
-            "product_name": new_product,
-            "createdAt": datetime.now()
-        })
+        already_inserted = self.products_collections.find_one({"product_name": new_product})
+        if already_inserted is None:
+            self.products_collections.insert_one({
+                "product_name": new_product,
+                "createdAt": datetime.now(),
+                "lowest_price": None,
+                "lowest_price_link": None
+            })
